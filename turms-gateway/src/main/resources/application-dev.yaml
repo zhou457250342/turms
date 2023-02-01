@@ -11,7 +11,7 @@ turms:
         port-auto-increment: true
     shared-config:
       mongo:
-        uri: mongodb://localhost:27017/turms-config-dev
+        uri: mongodb://192.168.50.173:27017/turms-config-dev
   gateway:
     client-api:
       logging:
@@ -21,9 +21,9 @@ turms:
       return-reason-for-server-error: true
     mongo:
       admin:
-        uri: mongodb://localhost:27017/turms-dev
+        uri: mongodb://192.168.50.173:27017/turms-dev
       user:
-        uri: mongodb://localhost:27017/turms-dev
+        uri: mongodb://192.168.50.173:27017/turms-dev
     fake:
       enabled: true
   logging:

@@ -29,7 +29,7 @@ import java.util.Date;
  */
 public record AddUserDTO(
         Long id,
-        @SensitiveProperty
+//        @SensitiveProperty
         String password,
         String name,
         String intro,

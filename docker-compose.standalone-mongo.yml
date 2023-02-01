@@ -1,0 +1,74 @@
+services:
+  # MongoDB
+  mongodb-config:
+    image: mongo:6.0.3-focal
+#    depends_on:
+#      - loki
+    entrypoint: [ "mongod", "--port", "27017", "--configsvr", "--replSet", "rs-config", "--bind_ip_all" ]
+    healthcheck:
+      # Use "mongo" instead of "mongosh" before v5.0
+      test: [ "CMD", "mongosh", "--quiet", "--eval", "db.runCommand(\"ping\").ok" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    mem_limit: 2g
+#    <<: *logging-mongo
+
+  mongodb-shard:
+    image: mongo:6.0.3-focal
+#    depends_on:
+#      - loki
+    entrypoint: [ "mongod", "--port", "27017", "--shardsvr", "--replSet", "shard01", "--bind_ip_all" ]
+    healthcheck:
+      # Use "mongo" instead of "mongosh" before v5.0
+      test: [ "CMD", "mongosh", "--quiet", "--eval", "db.runCommand(\"ping\").ok" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    mem_limit: 2g
+#    <<: *logging-mongo
+
+  mongodb-router:
+    image: mongo:6.0.3-focal
+#    depends_on:
+#      - loki
+    entrypoint: [ "mongos", "--port", "27017", "--configdb", "rs-config/mongodb-config:27017", "--bind_ip_all" ]
+    healthcheck:
+      # Use "mongo" instead of "mongosh" before v5.0
+      test: [ "CMD", "mongosh", "--quiet", "--eval", "db.runCommand(\"ping\").ok" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "27017:27017"
+    mem_limit: 2g
+#    <<: *logging-mongo
+
+  mongodb-setup:
+    image: mongo:6.0.3-focal
+    depends_on:
+      mongodb-config:
+        condition: service_healthy
+      mongodb-shard:
+        condition: service_healthy
+      mongodb-router:
+        condition: service_started
+    # Wait 10s for the replica set to elect their primary
+    # Use "mongo" instead of "mongosh" before v5.0
+    entrypoint:
+      - bash
+      - -c
+      - |
+        mongosh --host mongodb-config:27017 --eval "rs.initiate({_id: 'rs-config', configsvr: true, version: 1, members: [ { _id: 0, host : 'mongodb-config:27017' } ] })"
+        mongosh --host mongodb-shard:27017 --eval "rs.initiate({_id: 'shard01', version: 1, members: [ { _id: 0, host : 'mongodb-shard:27017' } ] })"
+        sleep 10
+        mongosh --host mongodb-router:27017 --eval "sh.addShard('shard01/mongodb-shard:27017')"
+    restart: "no"
+
+  # Services for observability - logging
+
+#  loki:
+#    image: grafana/loki:2.7.0
+#    ports:
+#      - "3100:3100"
+#    command: -config.file=/etc/loki/local-config.yaml

@@ -121,6 +121,7 @@ public class TurmsRedisClient {
                 })
                 .build();
         nativeClient = RedisClient.create(resources, uri);
+
         nativeConnection = nativeClient.connect(TurmsRedisCodecAdapter.DEFAULT);
         commands = (RedisReactiveCommandsImpl<ByteBuf, ByteBuf>) nativeConnection.reactive();
     }

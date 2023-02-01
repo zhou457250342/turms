@@ -37,7 +37,7 @@ import java.util.List;
 public class RedisProperties {
 
     @Description("Reference: https://lettuce.io/core/release/reference/index.html#redisuri.uri-syntax")
-    private transient List<String> uriList = List.of("redis://localhost");
+    private transient List<String> uriList = List.of("redis://yxzdxxl@192.168.50.156:6379/0?timeout=10s");
 
     private transient ShardingAlgorithm shardingAlgorithm = new ConsistentHashingShardingAlgorithm();
 

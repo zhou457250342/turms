@@ -34,6 +34,6 @@ public class SimpleRedisProperties {
     /**
      * https://lettuce.io/core/release/reference/index.html#redisuri.uri-syntax
      */
-    private String uri = "redis://localhost";
+    private String uri = "redis://yxzdxxl@192.168.50.156:6379/0?timeout=10s";
 
 }

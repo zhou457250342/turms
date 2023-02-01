@@ -74,3 +74,11 @@ turms-docs/src/.vuepress/.temp/
 turms-docs/src/.vuepress/.cache/
 turms-docs/src/.vuepress/dist/
 turms-docs/node_modules/
+turms-gateway_20230130_0.log
+turms-service_20230130_0.log
+log/turms-gateway-admin-api_20230130_0.log
+log/turms-gateway-client-api_20230130_0.log
+log/turms-gateway-notification_20230130_0.log
+log/turms-service-admin-api_20230130_0.log
+log/turms-service-client-api_20230130_0.log
+log/turms-service-notification_20230130_0.log

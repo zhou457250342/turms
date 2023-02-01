@@ -44,28 +44,28 @@ function setupClient(container, client, userId, password, targetId) {
             })
                 .then(res => appendContainer(container, `Offline messages: ${beautify(res.data)}`))
                 .catch(error => appendContainer(container, `failed to query offline messages ${beautify(error)}`, true));
-            const intervalId = setInterval(() => {
-                if (client.driver.isConnected) {
-                    client.messageService.sendMessage({
-                        isGroupMessage: false,
-                        targetId,
-                        deliveryDate: new Date(),
-                        text: "Hello Turms, My userId is " + userId,
-                        burnAfter: 30
-                    })
-                        .then(res => appendContainer(container, `message ${res.data} has been sent`))
-                        .catch(error => appendContainer(container, `failed to send message: ${beautify(error)}`, true));
-                } else {
-                    clearInterval(intervalId);
-                }
-            }, 2000);
-            client.groupService.createGroup({
-                name: 'Turms Developers Group',
-                intro: 'This is a group for the developers who are interested in Turms',
-                announcement: 'nope'
-            })
-                .then(res => appendContainer(container, `group ${res.data} has been created`))
-                .catch(error => appendContainer(container, `failed to create group: ${beautify(error)}`, true));
+            // const intervalId = setInterval(() => {
+            //     if (client.driver.isConnected) {
+            //         client.messageService.sendMessage({
+            //             isGroupMessage: false,
+            //             targetId,
+            //             deliveryDate: new Date(),
+            //             text: "Hello Turms, My userId is " + userId,
+            //             burnAfter: 30
+            //         })
+            //             .then(res => appendContainer(container, `message ${res.data} has been sent`))
+            //             .catch(error => appendContainer(container, `failed to send message: ${beautify(error)}`, true));
+            //     } else {
+            //         clearInterval(intervalId);
+            //     }
+            // }, 2000);
+            // client.groupService.createGroup({
+            //     name: 'Turms Developers Group',
+            //     intro: 'This is a group for the developers who are interested in Turms',
+            //     announcement: 'nope'
+            // })
+            //     .then(res => appendContainer(container, `group ${res.data} has been created`))
+            //     .catch(error => appendContainer(container, `failed to create group: ${beautify(error)}`, true));
         })
         .catch(reason => appendContainer(container, `failed to log in ${beautify(reason)}`, true));
 }
@@ -73,8 +73,8 @@ function setupClient(container, client, userId, password, targetId) {
 function start() {
     const clientUserOne = new TurmsClient('ws://localhost:10510', 30 * 1000);
     const clientUserTwo = new TurmsClient('ws://localhost:10510', 30 * 1000);
-    const USER_ONE_ID = '1';
-    const USER_TWO_ID = '2';
-    setupClient(userOneNotificationContainer, clientUserOne, USER_ONE_ID, '123', USER_TWO_ID);
-    setupClient(userTwoNotificationContainer, clientUserTwo, USER_TWO_ID, '123', USER_ONE_ID);
+    const USER_ONE_ID = '1005';
+    const USER_TWO_ID = '1006';
+    setupClient(userOneNotificationContainer, clientUserOne, USER_ONE_ID, '123456', USER_TWO_ID);
+    // setupClient(userTwoNotificationContainer, clientUserTwo, USER_TWO_ID, '123456', USER_ONE_ID);
 }
