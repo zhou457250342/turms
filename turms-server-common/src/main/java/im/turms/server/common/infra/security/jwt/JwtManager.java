@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
+
 import jakarta.annotation.Nullable;
 
 /**
@@ -218,7 +219,10 @@ public class JwtManager {
     private <T extends PublicKey> T getPublicKey(String algorithm, JwtKeyAlgorithmProperties properties) {
         String pemFilePath = properties.getPemFilePath();
         if (StringUtil.isNotBlank(pemFilePath)) {
-            return (T) CertificateUtil.getPublicKeyFromPem(new File(pemFilePath), algorithm);
+            //todo nadir 读取配置方式调整
+            File file = new File(JwtManager.class.getClassLoader().getResource(pemFilePath).getPath());
+            return (T) CertificateUtil.getPublicKeyFromPem(file, algorithm);
+            //return (T) CertificateUtil.getPublicKeyFromPem(new File(pemFilePath), algorithm);
         }
         JwtP12KeyStoreProperties p12 = properties.getP12();
         String filePath = p12.getFilePath();

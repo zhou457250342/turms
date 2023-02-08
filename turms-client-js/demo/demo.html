@@ -14,11 +14,32 @@
         <div class="columns">
             <div class="column">
                 <textarea id="user-one-notification-container" class="textarea" rows="18" readonly></textarea>
+                <input type="button" id="user-one-total" onclick="login(1005,userOneNotificationContainer,clientUserOne,1006)" value="登录"/>
+                <input type="button" id="user-one-total" onclick="msgTotal(clientUserOne,userOneNotificationContainer)" value="消息數量"/>
+                <input type="button" id="user-one-total" onclick="sendMsg(clientUserOne,'1006',userOneNotificationContainer)" value="發送消息"/>
+                <input type="button" id="user-one-total" onclick="loginOut(clientUserOne,1005)" value="退出"/>
+               
+                
             </div>
             <div class="column">
                 <textarea id="user-two-notification-container" class="textarea" rows="18" readonly></textarea>
+                <input type="button" id="user-one-total" onclick="login(1006,userTwoNotificationContainer,clientUserTwo,1005)" value="登录"/>
+                <input type="button" id="user-one-total" onclick="msgTotal(clientUserTwo,userTwoNotificationContainer)" value="消息數量"/>
+                <input type="button" id="user-one-total" onclick="sendMsg(clientUserTwo,'1005',userTwoNotificationContainer)" value="發送消息"/>
+                <input type="button" id="user-one-total" onclick="loginOut(clientUserTwo,1006)" value="退出"/>
             </div>
         </div>
+    </div>
+    <div class="container" style="margin-top:50px;">
+        组id<input type="text" id="msg_group_id" value="8052734267097591808">
+        <input type="button" id="user-one-total" onclick="sendMsgGroup(clientUserOne,userOneNotificationContainer)" value="發送组消息"/>
+        <br>
+        <input type="button" id="user-one-total" onclick="createGroup(clientUserOne,userOneNotificationContainer)" value="創建群組"/>
+        成員id<input type="text" id="group_userId">
+        組ID<input type="text" id="group_id">
+        <input type="button" id="user-one-total" onclick="addUser2Group()" value="邀請入組"/>
+        <input type="button" id="user-one-total" onclick="createGroup(clientUserOne,userOneNotificationContainer)" value="退出群組"/>
+        <input type="button" id="user-one-total" onclick="createGroup(clientUserOne,userOneNotificationContainer)" value="組成員信息"/>
     </div>
 </section>
 </body>

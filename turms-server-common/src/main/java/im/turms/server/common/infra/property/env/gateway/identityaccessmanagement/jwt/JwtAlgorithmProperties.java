@@ -33,7 +33,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public class JwtAlgorithmProperties {
 
     @NestedConfigurationProperty
-    private JwtKeyAlgorithmProperties rsa256 = new JwtKeyAlgorithmProperties();
+    private JwtKeyAlgorithmProperties rsa256 = new JwtKeyAlgorithmProperties().toBuilder().pemFilePath("rsa-public.pem").build();
 
     @NestedConfigurationProperty
     private JwtKeyAlgorithmProperties rsa384 = new JwtKeyAlgorithmProperties();

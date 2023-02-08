@@ -27,6 +27,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
@@ -99,4 +100,55 @@ class JwtManagerTests {
         ));
     }
 
+    @SneakyThrows
+    @Test
+    void decode2() {
+        ClassLoader classLoader = JwtManagerTests.class.getClassLoader();
+        JwtKeyAlgorithmProperties keyAuthenticationProperties = new JwtKeyAlgorithmProperties();
+        JwtKeyAlgorithmProperties rsaKeyAuthenticationProperties = new JwtKeyAlgorithmProperties()
+                .toBuilder()
+                .pemFilePath(new File(classLoader.getResource("rsa-public.pem").getPath())
+                        .getAbsolutePath())
+                .build();
+        JwtManager jwtManager = new JwtManager(new JwtIdentityAccessManagementVerificationProperties(),
+                rsaKeyAuthenticationProperties,
+                rsaKeyAuthenticationProperties,
+                rsaKeyAuthenticationProperties,
+                keyAuthenticationProperties,
+                keyAuthenticationProperties,
+                keyAuthenticationProperties,
+                keyAuthenticationProperties,
+                keyAuthenticationProperties,
+                keyAuthenticationProperties,
+                new JwtSecretKeyAlgorithmProperties().toBuilder()
+                        .filePath(new File(classLoader.getResource("hmac256-secret.text").getPath())
+                                .getAbsolutePath())
+                        .build(),
+                new JwtSecretKeyAlgorithmProperties().toBuilder()
+                        .p12(new JwtP12KeyStoreProperties().toBuilder()
+                                .filePath(new File(classLoader.getResource("hmac256-secret.p12").getPath())
+                                        .getAbsolutePath())
+                                .password("123456")
+                                .keyAlias("HS256")
+                                .build())
+                        .build(),
+                new JwtSecretKeyAlgorithmProperties());
+        Jwt jwt = jwtManager.decode(
+                "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.rCqpJF-NIkNgBmMGyVldtkFXiuZMWns5IywJplvagVl4X4XIr30WCfH7dN3dRdg_rw0cl7mJtHL0tlrX8pHuAwD2aKHOausGGMllRDJEsI86OgKeC05sMh_da8SLVQcqERxgPsDHonWlgfVr6r3t-yW1-9nohFZnqFcyqya91ShnHTQwK51EfLmgZZDZmTjRbTSlUhBzu4OinhJmICXV7nGPMqeT3lkLiiozx_9wGufAiIYLew4tPzL1P94EyeR-UAVe6OhFhmjsF-N3U1zObLPaOKGrhj5i1lRQDkmXuuwq8FioKVc71q_VybgbXQkWrQIPzyCA69isofPDA3v70w");
+
+        assertThat(jwt.header().algorithm()).isEqualTo("HS256");
+        assertThat(jwt.header().type()).isEqualTo("JWT");
+
+        assertThat(jwt.payload().issuer()).isEqualTo("T-Square");
+        assertThat(jwt.payload().subject()).isEqualTo("公演");
+        assertThat(jwt.payload().audiences()).containsExactly("James Chen");
+        assertThat(jwt.payload().issuedAt()).isEqualTo("2022-01-01T01:01:01.000Z");
+        assertThat(jwt.payload().expiresAt()).isEqualTo("2023-01-01T01:01:01.000Z");
+        assertThat(jwt.payload().notBefore()).isNull();
+        assertThat(jwt.payload().jwtId()).isNull();
+        assertThat(jwt.payload().customClaims()).containsExactlyInAnyOrderEntriesOf(Map.of(
+                "songs", List.of("残照", "Colors Of The Smile"),
+                "like", true
+        ));
+    }
 }

@@ -226,17 +226,17 @@ public class ClientRequestDispatcher {
                         .create(ResponseStatusCode.SERVER_UNAVAILABLE, requestId));
             }
 
-            // Rate limiting
+            // Rate limiting todo 移除限流
             long now = System.currentTimeMillis();
-            if (!ipRequestThrottler.tryAcquireToken(sessionWrapper.getIp(), now)) {
-                blocklistService.tryBlockIpForFrequentRequest(sessionWrapper.getIp());
-                UserSession userSession = sessionWrapper.getUserSession();
-                if (userSession != null) {
-                    blocklistService.tryBlockUserIdForFrequentRequest(userSession.getUserId());
-                }
-                return Mono.just(NotificationFactory
-                        .create(ResponseStatusCode.CLIENT_REQUESTS_TOO_FREQUENT, requestId));
-            }
+//            if (!ipRequestThrottler.tryAcquireToken(sessionWrapper.getIp(), now)) {
+//                blocklistService.tryBlockIpForFrequentRequest(sessionWrapper.getIp());
+//                UserSession userSession = sessionWrapper.getUserSession();
+//                if (userSession != null) {
+//                    blocklistService.tryBlockUserIdForFrequentRequest(userSession.getUserId());
+//                }
+//                return Mono.just(NotificationFactory
+//                        .create(ResponseStatusCode.CLIENT_REQUESTS_TOO_FREQUENT, requestId));
+//            }
 
             // Handle the request to get a response
             TurmsRequest.KindCase requestType = request.type();

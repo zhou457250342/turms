@@ -1,0 +1,22 @@
+{
+  "alg": "RS256",
+  "typ": "JWT"
+}
+
+{
+  "sub": "1005",
+  "authenticated": true,
+  "statements":[
+     {
+        "effect": "ALLOW",
+        "actions": "QUERY",
+        "resources": "*"
+     },
+     {
+        "effect": "ALLOW",
+        "actions": "CREATE",
+        "resources": "MESSAGE"
+     }
+  ],
+  "iat": 1516239022
+}

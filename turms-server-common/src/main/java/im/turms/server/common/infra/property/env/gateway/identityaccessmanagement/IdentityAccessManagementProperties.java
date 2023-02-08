@@ -46,7 +46,8 @@ public class IdentityAccessManagementProperties {
     @MutableProperty
     private boolean enabled = true;
 
-    private IdentityAccessManagementType type = IdentityAccessManagementType.PASSWORD;
+    // todo nadir 身份认证方式调整
+    private IdentityAccessManagementType type = IdentityAccessManagementType.JWT;
 
     @NestedConfigurationProperty
     private JwtIdentityAccessManagementProperties jwt = new JwtIdentityAccessManagementProperties();
