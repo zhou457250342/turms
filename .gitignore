@@ -82,3 +82,6 @@ log/turms-gateway-notification_20230130_0.log
 log/turms-service-admin-api_20230130_0.log
 log/turms-service-client-api_20230130_0.log
 log/turms-service-notification_20230130_0.log
+turms-server-common/.flattened-pom.xml
+turms-server-test/.flattened-pom.xml
+plugins/turms-plugin-minio-0.10.0-SNAPSHOT.jar

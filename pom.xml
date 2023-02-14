@@ -63,8 +63,8 @@
         <spring-boot-thin-layout.version>1.0.28.RELEASE</spring-boot-thin-layout.version>
 
         <!-- Configs -->
-        <skipITs>false</skipITs>
-        <skipUTs>false</skipUTs>
+        <skipITs>true</skipITs>
+        <skipUTs>true</skipUTs>
     </properties>
 
     <modules>

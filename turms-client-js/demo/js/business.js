@@ -73,7 +73,7 @@ const clientUserOne = new TurmsClient('ws://localhost:10510', 30 * 1000);
 const clientUserTwo = new TurmsClient('ws://localhost:10510', 30 * 1000);
 
 function login(userid,container,client,twoid){
-    setupClient(container, client, userid, 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMDA1IiwiYXV0aGVudGljYXRlZCI6dHJ1ZSwic3RhdGVtZW50cyI6W3siZWZmZWN0IjoiQUxMT1ciLCJhY3Rpb25zIjoiUVVFUlkiLCJyZXNvdXJjZXMiOiIqIn0seyJlZmZlY3QiOiJBTExPVyIsImFjdGlvbnMiOiJDUkVBVEUiLCJyZXNvdXJjZXMiOiJNRVNTQUdFIn1dfQ.R5vVw3b1FLMS5D2uRU7Cf5sj2JIz5jeNMFR_Pa1iID5FOnDT9vkJ0mBegu-SvQQ6RvVYYpo4pAYKiIfYxSYy6mR-LNbiVJT4Ne9uEXlTdKgzEJTUVVu6UaHI4bx4kyw_ZVB5WKYYhXLhghMWqWl3OEj4B__xP9iBcfI13hG2erY4pOTXEUjbvkpSJw9vkZrZDEYYfxvwYbKGoKA4yH7auSUGWNZLHdiyfKKFWtfOfvpYIgjVTSKrNNGYOpTD3sOL4g8ZZ_6ifSKRq7LlPTryylMAeAQxAonv4_l2QcGOUb-dehSCkJ1AtMffdKbwPjzn2V_ADDtkRukLtwPm7QtZhg', twoid);
+    setupClient(container, client, userid, 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMDk4MjAiLCJhdXRoZW50aWNhdGVkIjoidHJ1ZSIsInN0YXRlbWVudHMiOlt7ImVmZmVjdCI6IkFMTE9XIiwiYWN0aW9ucyI6IlFVRVJZIiwicmVzb3VyY2VzIjoiKiJ9LHsiZWZmZWN0IjoiQUxMT1ciLCJhY3Rpb25zIjoiQ1JFQVRFIiwicmVzb3VyY2VzIjoiTUVTU0FHRSJ9XX0.ZI66j5UBUxVNaK5RtWL8tUYLsGfgx_pZKjzfpgAWQkLDp6mGqcu_iwAv9Vo2I-4Rx8xXwtasayzfmWwzQkese39lk80tAFroSWrum4BsErwWpyc5EYuRygLZ8kJRj7WIFA8VmckhErBwR1XUxqBOKQXmA3hOZT45JsvpOZNJzjJXGLQ7C76e8eaDXVgwEdb4tCYrAd0fxkbLI8jUQMWdk5GLzRalHOYwoMSm77ie3a0K8mtqq4i6BYmkVwPiObj3n2KbFV8oZBmL_fzPCjsURNTkAa6lrpyjbiKUeA_MTyf1M57dCbyarM7dKYa7DdyvIhenpNdeHzie08SZ3iKpyA', twoid);
 }
 function loginOut(client,userid){
     client.userService.logout().then(()=>{
@@ -88,9 +88,9 @@ function start() {
     // setupClient(userTwoNotificationContainer, clientUserTwo, USER_TWO_ID, '123456', USER_ONE_ID);
 }
 function msgTotal(client,container){
-    client.messageService.queryMessagesWithTotal({
-        ids: ['1'],
-        areGroupMessages: false
+    client.messageService.queryMessages({
+        fromIds: ['8070748677588844544'],
+        areGroupMessages: true
     })
         .then(res => appendContainer(container, `Offline messages: ${beautify(res.data)}`))
         .catch(error => appendContainer(container, `failed to query offline messages ${beautify(error)}`, true));

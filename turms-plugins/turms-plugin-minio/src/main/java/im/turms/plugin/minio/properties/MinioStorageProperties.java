@@ -30,10 +30,10 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public class MinioStorageProperties {
 
     private boolean enabled = true;
-    private String endpoint = "http://localhost:9000";
+    private String endpoint = "http://192.168.50.173:9000";
     private String region = "";
-    private String accessKey = "minioadmin";
-    private String secretKey = "minioadmin";
+    private String accessKey = "minio";
+    private String secretKey = "minio123456";
 
     @NestedConfigurationProperty
     private Retry retry = new Retry();

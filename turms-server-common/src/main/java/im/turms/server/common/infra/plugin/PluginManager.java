@@ -42,9 +42,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ResourceUtils;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
@@ -57,6 +59,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipFile;
+
 import jakarta.annotation.Nullable;
 
 /**
@@ -138,8 +141,10 @@ public class PluginManager implements ApplicationListener<ContextRefreshedEvent>
         }
     }
 
-    private Path getPluginDir(Path home, String pluginsDir) {
-        return home.resolve(pluginsDir).toAbsolutePath();
+    private Path getPluginDir(Path home, String pluginsDir) throws FileNotFoundException {
+        //todo nadir debug mode
+        return Path.of(ResourceUtils.getURL("classpath:").getPath().substring(1) + "plugins");
+//        return home.resolve(pluginsDir).toAbsolutePath();
     }
 
     private Mono<Void> destroy() {
