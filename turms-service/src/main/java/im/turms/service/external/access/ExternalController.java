@@ -1,18 +1,25 @@
 package im.turms.service.external.access;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.google.gson.JsonObject;
 import im.turms.server.common.access.admin.dto.response.HttpHandlerResult;
 import im.turms.server.common.access.admin.dto.response.ResponseDTO;
 import im.turms.server.common.access.admin.permission.RequiredPermission;
 import im.turms.server.common.access.admin.web.annotation.PostMapping;
 import im.turms.server.common.access.admin.web.annotation.RequestBody;
 import im.turms.server.common.access.admin.web.annotation.RestController;
-import im.turms.server.common.access.common.ResponseStatusCode;
+import im.turms.server.common.access.client.dto.constant.GroupMemberRole;
 import im.turms.server.common.domain.user.po.User;
-import im.turms.server.common.infra.exception.ResponseException;
+import im.turms.service.domain.group.access.admin.dto.request.AddGroupDTO;
+import im.turms.service.domain.group.po.Group;
+import im.turms.service.domain.group.service.GroupMemberService;
+import im.turms.service.domain.group.service.GroupService;
 import im.turms.service.domain.user.access.admin.dto.request.AddUserDTO;
 import im.turms.service.domain.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Mono;
+
+import java.util.concurrent.atomic.AtomicLong;
 
 import static im.turms.server.common.access.admin.permission.AdminPermission.GROUP_CREATE;
 import static im.turms.server.common.access.admin.permission.AdminPermission.USER_CREATE;
@@ -26,6 +33,10 @@ public class ExternalController {
 
     @Autowired
     UserService userService;
+    @Autowired
+    GroupService groupService;
+    @Autowired
+    GroupMemberService groupMemberService;
 
     @PostMapping("accountImport")
     @RequiredPermission(USER_CREATE)
@@ -49,17 +60,30 @@ public class ExternalController {
 
     @PostMapping("group/create")
     @RequiredPermission(GROUP_CREATE)
-    public Mono<HttpHandlerResult<ResponseDTO<User>>> groupCreate(@RequestBody AddUserDTO addUserDTO) {
-        Mono<User> addUser = userService.addUser(
-                addUserDTO.id(),
-                addUserDTO.password(),
-                addUserDTO.name(),
-                addUserDTO.intro(),
-                addUserDTO.profilePicture(),
-                addUserDTO.profileAccessStrategy(),
-                addUserDTO.permissionGroupId(),
-                addUserDTO.registrationDate(),
-                addUserDTO.isActive());
-        return HttpHandlerResult.okIfTruthy(addUser);
+    public Mono<HttpHandlerResult<ResponseDTO<Object>>> addGroup(@RequestBody AddGroupDTO addGroupDTO) {
+        Long ownerId = addGroupDTO.ownerId();
+        Mono<Group> createdGroup = groupService.authAndCreateGroup(
+                addGroupDTO.creatorId(),
+                ownerId == null ? addGroupDTO.creatorId() : ownerId,
+                addGroupDTO.name(),
+                addGroupDTO.intro(),
+                addGroupDTO.announcement(),
+                addGroupDTO.minimumScore(),
+                addGroupDTO.typeId(),
+                addGroupDTO.creationDate(),
+                addGroupDTO.deletionDate(),
+                addGroupDTO.muteEndDate(),
+                addGroupDTO.isActive());
+        //todo nadir groupId 的问题
+        final String[] groupId = new String[1];
+        return createdGroup.flatMap(op -> {
+                    groupId[0] = op.getId() + "";
+                    return groupMemberService.addGroupMembers(
+                                    op.getId(),
+                                    addGroupDTO.members(),
+                                    GroupMemberRole.MEMBER, null, null, null)
+                            .thenReturn(HttpHandlerResult.okIfTruthy(groupId[0]));
+                }
+        );
     }
 }

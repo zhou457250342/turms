@@ -72,8 +72,8 @@ function setupClient(container, client, userId, password, targetId) {
 const clientUserOne = new TurmsClient('ws://localhost:10510', 30 * 1000);
 const clientUserTwo = new TurmsClient('ws://localhost:10510', 30 * 1000);
 
-function login(userid,container,client,twoid){
-    setupClient(container, client, userid, 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMDk4MjAiLCJhdXRoZW50aWNhdGVkIjoidHJ1ZSIsInN0YXRlbWVudHMiOlt7ImVmZmVjdCI6IkFMTE9XIiwiYWN0aW9ucyI6IlFVRVJZIiwicmVzb3VyY2VzIjoiKiJ9LHsiZWZmZWN0IjoiQUxMT1ciLCJhY3Rpb25zIjoiQ1JFQVRFIiwicmVzb3VyY2VzIjoiTUVTU0FHRSJ9XX0.ZI66j5UBUxVNaK5RtWL8tUYLsGfgx_pZKjzfpgAWQkLDp6mGqcu_iwAv9Vo2I-4Rx8xXwtasayzfmWwzQkese39lk80tAFroSWrum4BsErwWpyc5EYuRygLZ8kJRj7WIFA8VmckhErBwR1XUxqBOKQXmA3hOZT45JsvpOZNJzjJXGLQ7C76e8eaDXVgwEdb4tCYrAd0fxkbLI8jUQMWdk5GLzRalHOYwoMSm77ie3a0K8mtqq4i6BYmkVwPiObj3n2KbFV8oZBmL_fzPCjsURNTkAa6lrpyjbiKUeA_MTyf1M57dCbyarM7dKYa7DdyvIhenpNdeHzie08SZ3iKpyA', twoid);
+function login(userid,container,client,twoid,token){
+    setupClient(container, client, userid, token, twoid);
 }
 function loginOut(client,userid){
     client.userService.logout().then(()=>{
@@ -104,6 +104,72 @@ function createGroup(client,container){
             .then(res => appendContainer(container, `group ${res.data} has been created`))
             .catch(error => appendContainer(container, `failed to create group: ${beautify(error)}`, true));
 }
+
+function uploadImgChange(client,file,container){
+    fileToBuf(file.files[0],function(buffer,name){
+       var data = new Uint8Array(buffer);
+        client.storageService.uploadUserProfilePicture({
+                data,
+                name,
+                mediaType:'image/jpeg',
+                extra:[],
+                urlKeyName:''
+            }
+        )
+        .then(res => appendContainer(container, `${res.data} has been upload`))
+        .catch(error => appendContainer(container, `failed to create : ${beautify(error)}`, true));
+        ;
+    });
+}
+
+function uploadAttrChange(client,file,container){
+    fileToBuf(file.files[0],function(buffer,name){
+       var data = new Uint8Array(buffer);
+        client.storageService.uploadMessageAttachmentInGroupConversation({
+                groupId:'8070748677588844544',
+                data,
+                name,
+                mediaType:'image/png',
+                extra:[],
+                urlKeyName:''
+            }
+        )
+        .then(res => 
+            appendContainer(container, `${res.data} has been upload`)
+        )
+        .catch(error => appendContainer(container, `failed to create : ${beautify(error)}`, true));
+        ;
+    });
+}
+function queryUserImg(client,userId,container){
+        client.storageService.queryUserProfilePicture({
+            userId,
+            extra:[]
+        })
+        .then(res => appendContainer(container, `${res.data}`))
+        .catch(error => appendContainer(container, `failed : ${beautify(error)}`, true));;
+}
+
+function queryMsgAttr(client,userId,container){
+    client.storageService.queryMessageAttachment({
+        attachmentIdNum:"3828362379713200128",
+        extra:[],
+        fetchDownloadInfo:true
+    })
+    .then(res => appendContainer(container, `${res.data}`))
+    .catch(error => appendContainer(container, `failed : ${beautify(error)}`, true));;
+}
+
+function fileToBuf(file, cb){
+    var fr = new FileReader();
+    var filename = file.name;
+    fr.readAsArrayBuffer(file);
+    fr.addEventListener("loadend",(e) => {
+        var buf = e.target.result;
+        cb(buf, filename);
+    },false);
+}
+
 function addUser2Group(){
     const userId = document.getElementById("group_userId").value;
     const groupId = document.getElementById("group_id").value;

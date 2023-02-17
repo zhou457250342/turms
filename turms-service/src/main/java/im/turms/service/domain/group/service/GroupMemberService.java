@@ -48,6 +48,7 @@ import im.turms.server.common.infra.validation.Validator;
 import im.turms.server.common.storage.mongo.IMongoCollectionInitializer;
 import im.turms.service.domain.common.permission.ServicePermission;
 import im.turms.service.domain.common.validation.DataValidator;
+import im.turms.service.domain.group.access.admin.dto.request.AddGroupMemberDTO;
 import im.turms.service.domain.group.bo.GroupInvitationStrategy;
 import im.turms.service.domain.group.po.GroupMember;
 import im.turms.service.domain.group.repository.GroupMemberRepository;
@@ -71,6 +72,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -210,6 +212,49 @@ public class GroupMemberService {
                     groupId,
                     userId,
                     name,
+                    groupMemberRole,
+                    joinDate,
+                    muteEndDate));
+        }
+        return groupMemberRepository.insertAllOfSameType(groupMembers, session)
+                .then(groupVersionService.updateMembersVersion(groupId)
+                        .onErrorResume(t -> {
+                            LOGGER.error("Caught an error while updating the members version of the group {} after adding a group member",
+                                    groupId, t);
+                            return Mono.empty();
+                        }))
+                .thenReturn(groupMembers);
+    }
+
+    public Mono<List<GroupMember>> addGroupMembers(
+            @NotNull Long groupId,
+            @NotNull List<AddGroupMemberDTO> members,
+            @NotNull @ValidGroupMemberRole GroupMemberRole groupMemberRole,
+            @Nullable @PastOrPresent Date joinDate,
+            @Nullable Date muteEndDate,
+            @Nullable ClientSession session) {
+        try {
+            Validator.notNull(groupId, "groupId");
+            // TODO: configurable
+            Validator.maxSize(members, "userIds", 100);
+            Validator.notNull(groupMemberRole, "groupMemberRole");
+            DataValidator.validGroupMemberRole(groupMemberRole);
+            Validator.pastOrPresent(joinDate, "joinDate");
+        } catch (ResponseException e) {
+            return Mono.error(e);
+        }
+        if (CollectionUtil.isEmpty(members)) {
+            return PublisherPool.emptyList();
+        }
+        if (joinDate == null) {
+            joinDate = new Date();
+        }
+        List<GroupMember> groupMembers = new ArrayList<>(members.size());
+        for (AddGroupMemberDTO member : members) {
+            groupMembers.add(new GroupMember(
+                    groupId,
+                    member.userId(),
+                    member.name(),
                     groupMemberRole,
                     joinDate,
                     muteEndDate));

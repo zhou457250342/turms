@@ -89,11 +89,12 @@ public class StorageServiceController extends BaseServiceController {
                             name,
                             mediaType,
                             extra)
-                    .map(info -> RequestHandlerResultFactory.get(ClientMessagePool
-                            .getTurmsNotificationDataBuilder()
-                            .setStringsWithVersion(ClientMessagePool.getStringsWithVersionBuilder()
-                                    .addAllStrings(ProtoModelConvertor.toList(info)))
-                            .build()));
+                    .map(info ->
+                            RequestHandlerResultFactory.get(ClientMessagePool
+                                    .getTurmsNotificationDataBuilder()
+                                    .setStringsWithVersion(ClientMessagePool.getStringsWithVersionBuilder()
+                                            .addAllStrings(ProtoModelConvertor.toList(info)))
+                                    .build()));
         };
     }
 

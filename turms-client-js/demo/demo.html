@@ -14,24 +14,32 @@
         <div class="columns">
             <div class="column">
                 <textarea id="user-one-notification-container" class="textarea" rows="18" readonly></textarea>
-                <input type="button" id="user-one-total" onclick="login('109820',userOneNotificationContainer,clientUserOne,1006)" value="登录"/>
+                <input type="button" id="user-one-total" onclick="login('9820',userOneNotificationContainer,clientUserOne,9825,'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5ODIwIiwiYXV0aGVudGljYXRlZCI6InRydWUiLCJzdGF0ZW1lbnRzIjpbeyJlZmZlY3QiOiJBTExPVyIsImFjdGlvbnMiOiJRVUVSWSIsInJlc291cmNlcyI6IioifSx7ImVmZmVjdCI6IkFMTE9XIiwiYWN0aW9ucyI6IkNSRUFURSIsInJlc291cmNlcyI6Ik1FU1NBR0UifSx7ImVmZmVjdCI6IkFMTE9XIiwiYWN0aW9ucyI6IioiLCJyZXNvdXJjZXMiOiJSRVNPVVJDRSJ9XX0.d7unw2slohA9xLT8cwKL7qVlfmIHUVfyixixF8Y68XKX8NbqYKplEJrR5SbKmepUNyddq-QOuBKVyUaa8iVnIH1NFhWacZx4JlYUOVFNbiw_51n6jlLo5ARBpxAWfroRBx38C-TtN-db3BN5FYXc7tRFtdFDdacPE5Zsto7wW3XNdId4Oq-60qmhph56gstRr4msnnToz3Tgpd8TrLcjz4ZXKzsp0R-MqGNqfstWpFlS_tVe35iuP2npFSYisLr4eq4VRgXmh_Sz7NzacCt___kB-HUVCRYzb1UzlyHsW-8MUQFMim2dX3WMujyva-sgtJoXeggEUH9X03cgIutoPg')" value="登录"/>
                 <input type="button" id="user-one-total" onclick="msgTotal(clientUserOne,userOneNotificationContainer)" value="消息數量"/>
-                <input type="button" id="user-one-total" onclick="sendMsg(clientUserOne,'1006',userOneNotificationContainer)" value="發送消息"/>
+                <input type="button" id="user-one-total" onclick="sendMsg(clientUserOne,'9820',userOneNotificationContainer)" value="發送消息"/>
                 <input type="button" id="user-one-total" onclick="loginOut(clientUserOne,1005)" value="退出"/>
-               
-                
+                <br/>
+                个人图片
+                <input type="file" accept="image/*" id="upload-user-img" value="" onchange="uploadImgChange(clientUserOne,this,userOneNotificationContainer)" /> 
+                附件
+                <input type="file" accept="*" id="upload-user-attr" value="" onchange="uploadAttrChange(clientUserOne,this,userOneNotificationContainer)" /> 
+                <br/>
+                <input type="button" id="user-one-total" onclick="queryMsgAttr(clientUserOne,109820,userOneNotificationContainer)" value="查询消息附件"/>
+                <br/>
+                获取个人图片
+                <input type="button" id="user-one-total" onclick="queryUserImg(clientUserOne,109820,userOneNotificationContainer)" value="获取"/>
             </div>
             <div class="column">
                 <textarea id="user-two-notification-container" class="textarea" rows="18" readonly></textarea>
-                <input type="button" id="user-one-total" onclick="login(1006,userTwoNotificationContainer,clientUserTwo,1005)" value="登录"/>
+                <input type="button" id="user-one-total" onclick="login(9825,userTwoNotificationContainer,clientUserTwo,9820,'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5ODI1IiwiYXV0aGVudGljYXRlZCI6InRydWUiLCJzdGF0ZW1lbnRzIjpbeyJlZmZlY3QiOiJBTExPVyIsImFjdGlvbnMiOiJRVUVSWSIsInJlc291cmNlcyI6IioifSx7ImVmZmVjdCI6IkFMTE9XIiwiYWN0aW9ucyI6IkNSRUFURSIsInJlc291cmNlcyI6Ik1FU1NBR0UifSx7ImVmZmVjdCI6IkFMTE9XIiwiYWN0aW9ucyI6IioiLCJyZXNvdXJjZXMiOiJSRVNPVVJDRSJ9XX0.IXoeqsQwvUZ4FsPvlMOzY4XADuZJBObBMfUyte7-B9Ds_qstN66YK9-Ag3378pWq9p1RHXvUWFKimrXzZ_YUSbyp3hg-G3SYmjGZDjuaMxjuaESiwsAh4u4vG_ptmVYUg8xS_zDk9c0bn9-3LNEzxqQD8C7f_7s3kPW1OdiKK_oGHOAxRRpFCK98OAUD50xR7wffzx4wtO-Q1VXh5tUfz0xG96MckvAIFp9pZtci3t2EXhMdJSq8OELPs7Kldr9NY49e33_m7vUXLS09g4fMzpwwN_SH7rT55b225xUWrraNNO7p_AR1W2tsJnXMP46pDRGGoonxaat5lAfnkMN0Lw')" value="登录"/>
                 <input type="button" id="user-one-total" onclick="msgTotal(clientUserTwo,userTwoNotificationContainer)" value="消息數量"/>
-                <input type="button" id="user-one-total" onclick="sendMsg(clientUserTwo,'1005',userTwoNotificationContainer)" value="發送消息"/>
+                <input type="button" id="user-one-total" onclick="sendMsg(clientUserTwo,'9820',userTwoNotificationContainer)" value="發送消息"/>
                 <input type="button" id="user-one-total" onclick="loginOut(clientUserTwo,1006)" value="退出"/>
             </div>
         </div>
     </div>
     <div class="container" style="margin-top:50px;">
-        组id<input type="text" id="msg_group_id" value="8052734267097591808">
+        组id<input type="text" id="msg_group_id" value="7224076896476094464">
         <input type="button" id="user-one-total" onclick="sendMsgGroup(clientUserOne,userOneNotificationContainer)" value="發送组消息"/>
         <br>
         <input type="button" id="user-one-total" onclick="createGroup(clientUserOne,userOneNotificationContainer)" value="創建群組"/>

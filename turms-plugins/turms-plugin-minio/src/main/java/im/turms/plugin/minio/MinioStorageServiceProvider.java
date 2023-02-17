@@ -87,6 +87,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.crypto.spec.SecretKeySpec;
+
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 
@@ -112,6 +113,7 @@ public class MinioStorageServiceProvider extends TurmsExtension implements Stora
 
     private TurmsMinioAsyncClient client;
     private String baseUrl;
+    private String baseUrl_s;
 
     private boolean isBase62Enabled;
     @Nullable
@@ -161,19 +163,20 @@ public class MinioStorageServiceProvider extends TurmsExtension implements Stora
         if (!properties.isEnabled()) {
             return;
         }
+        baseUrl_s = properties.getEndpoint_s();
         String endpoint = properties.getEndpoint();
         URI uri;
         try {
             uri = new URI(endpoint);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("The endpoint URL [" +
-                                               endpoint +
-                                               "] is illegal", e);
+                    endpoint +
+                    "] is illegal", e);
         }
         if (!uri.isAbsolute()) {
             throw new IllegalArgumentException("The endpoint URL [" +
-                                               endpoint +
-                                               "] must be absolute");
+                    endpoint +
+                    "] must be absolute");
         }
         ApplicationContext context = getContext();
         node = context.getBean(Node.class);
@@ -204,7 +207,7 @@ public class MinioStorageServiceProvider extends TurmsExtension implements Stora
                 key = Base64.getDecoder().decode(base64Key);
             } catch (Exception e) {
                 throw new IllegalArgumentException("The HMAC key must be Base64-encoded, but got: " +
-                                                   base64Key, e);
+                        base64Key, e);
             }
             if (key.length < 16) {
                 throw new IllegalArgumentException("The length of HMAC key must be greater than or equal to 16, but got: " + key.length);
@@ -290,7 +293,7 @@ public class MinioStorageServiceProvider extends TurmsExtension implements Stora
                                 .then(Mono.defer(() ->
                                         setBucketLifecycle(bucket, itemProperties.getExpireAfterDays())));
                         if (resourceType == StorageResourceType.USER_PROFILE_PICTURE ||
-                            resourceType == GROUP_PROFILE_PICTURE) {
+                                resourceType == GROUP_PROFILE_PICTURE) {
                             createBucket = createBucket
                                     .then(Mono.defer(() ->
                                             setBucketPolicy(bucket, itemProperties.getAllowedReferrers())));
@@ -337,10 +340,10 @@ public class MinioStorageServiceProvider extends TurmsExtension implements Stora
                         .config(config)
                         .build()))
                 .onErrorMap(t -> new RuntimeException("Failed to set the bucket policy [" +
-                                                      StringUtil.sanitizeLatin1(config) +
-                                                      "] to the bucket [" +
-                                                      bucket
-                                                      + "]", t))
+                        StringUtil.sanitizeLatin1(config) +
+                        "] to the bucket [" +
+                        bucket
+                        + "]", t))
                 .then();
     }
 
@@ -363,8 +366,8 @@ public class MinioStorageServiceProvider extends TurmsExtension implements Stora
                         )))
                         .build()))
                 .onErrorMap(t -> new RuntimeException("Failed to set a lifecycle configuration to the bucket [" +
-                                                      bucket
-                                                      + "]", t))
+                        bucket
+                        + "]", t))
                 .then();
     }
 
@@ -393,10 +396,10 @@ public class MinioStorageServiceProvider extends TurmsExtension implements Stora
         }
         return PublisherUtil.fromFuture(() -> client.getPresignedObjectUrlAsync(builder.build()))
                 .onErrorMap(t -> new RuntimeException("Failed to get the presigned URL to download the resource object [" +
-                                                      key +
-                                                      "] in the bucket [" +
-                                                      bucket +
-                                                      "]", t));
+                        key +
+                        "] in the bucket [" +
+                        bucket +
+                        "]", t));
     }
 
     private Map<String, String> getResourceUploadInfo(@NotNull String bucket,
@@ -425,14 +428,14 @@ public class MinioStorageServiceProvider extends TurmsExtension implements Stora
         try {
             Map<String, String> map = client.getPresignedPostFormData(policy);
             map = CollectionUtil.add(map, RESOURCE_ID, objectKey);
-            map.put(RESOURCE_URL, baseUrl + "/" + bucket);
+            map.put(RESOURCE_URL, baseUrl_s + "/" + bucket);
             return map;
         } catch (Exception e) {
             throw new RuntimeException("Failed to get the presigned post form data for the resource object [" +
-                                       objectKey +
-                                       "] in the bucket [" +
-                                       bucket +
-                                       "]"
+                    objectKey +
+                    "] in the bucket [" +
+                    bucket +
+                    "]"
                     , e);
         }
     }
@@ -485,10 +488,10 @@ public class MinioStorageServiceProvider extends TurmsExtension implements Stora
                         .object(objectKey)
                         .build()))
                 .onErrorMap(t -> new RuntimeException("Failed to remove the user profile picture [" +
-                                                      objectKey +
-                                                      "] in the bucket [" +
-                                                      bucketName +
-                                                      "]"
+                        objectKey +
+                        "] in the bucket [" +
+                        bucketName +
+                        "]"
                         , t));
     }
 
@@ -542,10 +545,10 @@ public class MinioStorageServiceProvider extends TurmsExtension implements Stora
                                     .object(objectKey)
                                     .build()))
                             .onErrorMap(t -> new RuntimeException("Failed to remove the group profile picture [" +
-                                                                  objectKey +
-                                                                  "] in the bucket [" +
-                                                                  bucketName +
-                                                                  "]"
+                                    objectKey +
+                                    "] in the bucket [" +
+                                    bucketName +
+                                    "]"
                                     , t));
                 });
     }
@@ -748,7 +751,7 @@ public class MinioStorageServiceProvider extends TurmsExtension implements Stora
         return messageAttachmentRepository.findUploaderIdAndSharedWithUserIdsAndGroupIds(messageAttachmentIdNum)
                 .flatMap(attachment -> {
                     if (!attachment.getUploaderId().equals(requesterId) &&
-                        !CollectionUtil.contains(attachment.getSharedWithUserIds(), requesterId)) {
+                            !CollectionUtil.contains(attachment.getSharedWithUserIds(), requesterId)) {
                         List<Long> sharedWithGroupIds = attachment.getSharedWithGroupIds();
                         if (sharedWithGroupIds == null || sharedWithGroupIds.isEmpty()) {
                             return ERROR_NOT_UPLOADER_OR_SHARED_WITH_USER_TO_DOWNLOAD_MESSAGE_ATTACHMENT;
