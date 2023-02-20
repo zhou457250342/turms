@@ -32,6 +32,7 @@ import im.turms.service.access.servicerequest.dto.RequestHandlerResultFactory;
 import im.turms.service.domain.common.access.servicerequest.controller.BaseServiceController;
 import im.turms.service.domain.conversation.service.ConversationService;
 import im.turms.service.domain.group.service.GroupMemberService;
+import im.turms.service.domain.message.service.MessageService;
 import im.turms.service.infra.proto.ProtoModelConvertor;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Mono;
@@ -51,6 +52,7 @@ public class ConversationServiceController extends BaseServiceController {
 
     private final ConversationService conversationService;
     private final GroupMemberService groupMemberService;
+    private final MessageService messageService;
 
     private boolean isTypingStatusEnabled;
     private boolean notifyPrivateConversationParticipantAfterReadDateUpdated;
@@ -59,9 +61,11 @@ public class ConversationServiceController extends BaseServiceController {
     public ConversationServiceController(
             TurmsPropertiesManager propertiesManager,
             ConversationService conversationService,
-            GroupMemberService groupMemberService) {
+            GroupMemberService groupMemberService,
+            MessageService messageService) {
         this.conversationService = conversationService;
         this.groupMemberService = groupMemberService;
+        this.messageService = messageService;
 
         propertiesManager.triggerAndAddGlobalPropertiesChangeListener(this::updateProperties);
     }
@@ -87,14 +91,16 @@ public class ConversationServiceController extends BaseServiceController {
                     return Mono.just(RequestHandlerResultFactory.NO_CONTENT);
                 }
                 dataFlux = conversationService.queryGroupConversations(groupIds)
-                        .map(conversation -> ProtoModelConvertor.groupConversations2proto(conversation).build())
+                        .map(conversation -> ProtoModelConvertor.groupConversations2proto(conversation, clientRequest.userId()).build())
                         .collect(CollectorUtil.toList(targetIds.size()))
-                        .map(conversations -> ClientMessagePool
-                                .getTurmsNotificationDataBuilder()
-                                .setConversations(ClientMessagePool
-                                        .getConversationsBuilder()
-                                        .addAllGroupConversations(conversations))
-                                .build());
+                        .map(conversations -> {
+                            return ClientMessagePool
+                                    .getTurmsNotificationDataBuilder()
+                                    .setConversations(ClientMessagePool
+                                            .getConversationsBuilder()
+                                            .addAllGroupConversations(conversations))
+                                    .build();
+                        });
             } else {
                 dataFlux = conversationService.queryPrivateConversations(targetIds, clientRequest.userId())
                         .map(conversation -> ProtoModelConvertor.privateConversation2proto(conversation).build())

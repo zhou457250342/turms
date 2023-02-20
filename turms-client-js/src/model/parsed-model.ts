@@ -63,7 +63,8 @@ export declare namespace ParsedModel {
 
     interface GroupConversation {
         groupId: string;
-        memberIdAndReadDate: { [k: string]: Date };
+        hasMsgUnRead: boolean;
+        memberIdToReadDate: { [k: string]: Date };
     }
 
     interface Message {

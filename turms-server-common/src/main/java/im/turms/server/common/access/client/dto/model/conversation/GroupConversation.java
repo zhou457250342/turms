@@ -79,6 +79,7 @@ public final class GroupConversation extends
 
     public static final int GROUP_ID_FIELD_NUMBER = 1;
     private long groupId_;
+    private boolean hasMsgUnRead_;
 
     /**
      * <code>int64 group_id = 1;</code>
@@ -88,6 +89,11 @@ public final class GroupConversation extends
     @java.lang.Override
     public long getGroupId() {
         return groupId_;
+    }
+
+    @java.lang.Override
+    public boolean hasMsgUnRead() {
+        return hasMsgUnRead_;
     }
 
     public static final int MEMBER_ID_TO_READ_DATE_FIELD_NUMBER = 2;
@@ -248,7 +254,7 @@ public final class GroupConversation extends
         im.turms.server.common.access.client.dto.model.conversation.GroupConversation other = (im.turms.server.common.access.client.dto.model.conversation.GroupConversation) obj;
 
         if (getGroupId()
-            != other.getGroupId()) {
+                != other.getGroupId()) {
             return false;
         }
         if (!internalGetMemberIdToReadDate().equals(
@@ -472,6 +478,7 @@ public final class GroupConversation extends
             return result;
         }
 
+
         @java.lang.Override
         public im.turms.server.common.access.client.dto.model.conversation.GroupConversation buildPartial() {
             im.turms.server.common.access.client.dto.model.conversation.GroupConversation result = new im.turms.server.common.access.client.dto.model.conversation.GroupConversation(this);
@@ -479,6 +486,7 @@ public final class GroupConversation extends
             result.groupId_ = groupId_;
             result.memberIdToReadDate_ = internalGetMemberIdToReadDate();
             result.memberIdToReadDate_.makeImmutable();
+            result.hasMsgUnRead_ = hasMsgUnRead_;
             onBuilt();
             return result;
         }
@@ -633,6 +641,28 @@ public final class GroupConversation extends
             onChanged();
             return this;
         }
+
+
+        private boolean hasMsgUnRead_;
+
+        @Override
+        public boolean hasMsgUnRead() {
+            return hasMsgUnRead_;
+        }
+
+        public Builder setHasMsgUnRead(boolean value) {
+            hasMsgUnRead_ = value;
+            onChanged();
+            return this;
+        }
+
+        public Builder clearHasMsgUnRead() {
+
+            hasMsgUnRead_ = false;
+            onChanged();
+            return this;
+        }
+
 
         private com.google.protobuf.MapField<
                 java.lang.Long, java.lang.Long> memberIdToReadDate_;

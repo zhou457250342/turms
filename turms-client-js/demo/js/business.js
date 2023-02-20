@@ -81,6 +81,7 @@ function loginOut(client,userid){
     })
 }
 
+
 function start() {
     // const USER_ONE_ID = '1005';
     // const USER_TWO_ID = '1006';
@@ -89,7 +90,7 @@ function start() {
 }
 function msgTotal(client,container){
     client.messageService.queryMessages({
-        fromIds: ['8070748677588844544'],
+        fromIds: ['1594577695167352832'],
         areGroupMessages: true
     })
         .then(res => appendContainer(container, `Offline messages: ${beautify(res.data)}`))
@@ -208,4 +209,22 @@ function sendMsgGroup(client,container){
                     .then(res => appendContainer(container, `message ${res.data} has been sent`))
                     .catch(error => appendContainer(container, `failed to send message: ${beautify(error)}`, true));
             }
+}
+
+function queryGroupConversations(client,container){
+    const groupId = document.getElementById("msg_group_id").value;
+    const groupIds=[groupId];
+    client.conversationService.queryGroupConversations({
+        groupIds
+    }).then(res => appendContainer(container, `message ${JSON.stringify(res.data)} has been sent`))
+    .catch(error => appendContainer(container, `failed : ${beautify(error)}`, true));
+}
+function updateGroupConversationReadDate(client,container){
+    const groupId = document.getElementById("msg_group_id").value;
+    const readDate= new Date();
+    client.conversationService.updateGroupConversationReadDate({
+        groupId,
+        readDate
+    }).then(res => appendContainer(container, `message ${JSON.stringify(res.data)} has been sent`))
+    .catch(error => appendContainer(container, `failed : ${beautify(error)}`, true));
 }

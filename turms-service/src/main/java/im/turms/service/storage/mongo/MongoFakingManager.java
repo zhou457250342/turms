@@ -351,7 +351,7 @@ public final class MongoFakingManager {
                     epoch);
             conversationRelatedObjs.add(privateConversation);
         }
-        GroupConversation groupConversation = new GroupConversation(1L,
+        GroupConversation groupConversation = new GroupConversation(1L, new Date(),
                 CollectionUtil.newMap(groupMemberIds, id -> epoch));
         conversationRelatedObjs.add(groupConversation);
 

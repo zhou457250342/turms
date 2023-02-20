@@ -73,6 +73,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
@@ -603,8 +604,9 @@ public class GroupService {
                                 .map(isOwnerOrManager -> isOwnerOrManager
                                         ? ResponseStatusCode.OK
                                         : ResponseStatusCode.NOT_OWNER_OR_MANAGER_TO_UPDATE_GROUP_INFO);
-                        case OWNER_MANAGER_MEMBER -> groupMemberService.isOwnerOrManagerOrMember(requesterId, groupId, false)
-                                .map(isMember -> isMember ? ResponseStatusCode.OK : ResponseStatusCode.NOT_MEMBER_TO_UPDATE_GROUP_INFO);
+                        case OWNER_MANAGER_MEMBER ->
+                                groupMemberService.isOwnerOrManagerOrMember(requesterId, groupId, false)
+                                        .map(isMember -> isMember ? ResponseStatusCode.OK : ResponseStatusCode.NOT_MEMBER_TO_UPDATE_GROUP_INFO);
                         case ALL -> Mono.just(ResponseStatusCode.OK);
                         default -> Mono.error(new IllegalStateException("Unexpected value: " + groupUpdateStrategy));
                     };

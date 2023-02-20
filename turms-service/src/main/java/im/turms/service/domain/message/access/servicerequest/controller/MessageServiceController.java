@@ -290,7 +290,7 @@ public class MessageServiceController extends BaseServiceController {
                         if (updateReadDateWhenUserQueryingMessage) {
                             resultMono = resultMono.doOnSuccess(ignored -> {
                                 Mono<Void> mono = areGroupMessages
-                                        ? conversationService.upsertGroupConversationReadDate(messages.get(0).groupId(), userId, new Date())
+                                        ? conversationService.upsertGroupConversationReadDate(messages.get(0).groupId(), userId, new Date(), false)
                                         : conversationService
                                         .upsertPrivateConversationReadDate(userId, messages.get(0).getTargetId(), new Date());
                                 mono.subscribe(null, t -> LOGGER.error("Caught an error while upserting the {} conversation read date: {}",

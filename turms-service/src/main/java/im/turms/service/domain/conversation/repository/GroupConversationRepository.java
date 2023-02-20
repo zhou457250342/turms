@@ -25,6 +25,9 @@ import im.turms.server.common.storage.mongo.TurmsMongoClient;
 import im.turms.server.common.storage.mongo.operation.option.Filter;
 import im.turms.server.common.storage.mongo.operation.option.Update;
 import im.turms.service.domain.conversation.po.GroupConversation;
+import im.turms.service.domain.group.po.Group;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
@@ -53,6 +56,14 @@ public class GroupConversationRepository extends BaseRepository<GroupConversatio
         Update update = Update.newBuilder(1)
                 .set(fieldKey, readDate);
         return mongoClient.upsert(entityClass, filter, update);
+    }
+
+    public Mono<UpdateResult> updateConversationLastOn(@NotNull Long groupId, @NotNull Date lastOnDate) {
+        Filter filter = Filter.newBuilder(1)
+                .eq(DomainFieldName.ID, groupId);
+        Update update = Update.newBuilder(1)
+                .set(Group.Fields.LAST_UPDATED_DATE, lastOnDate);
+        return mongoClient.updateOne(entityClass, filter, update);
     }
 
     public Mono<Void> upsert(Long groupId, Collection<Long> memberIds, Date readDate) {

@@ -50,6 +50,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 
@@ -508,7 +509,7 @@ public final class ProtoModelConvertor {
     }
 
     public static GroupConversation.Builder groupConversations2proto(
-            im.turms.service.domain.conversation.po.GroupConversation groupConversation) {
+            im.turms.service.domain.conversation.po.GroupConversation groupConversation, Long userId) {
         GroupConversation.Builder builder = ClientMessagePool.getGroupConversationBuilder();
         Long groupId = groupConversation.getGroupId();
         if (groupId != null) {
@@ -518,6 +519,10 @@ public final class ProtoModelConvertor {
         if (memberIdToReadDate != null) {
             Map<Long, Long> map = CollectionUtil.transformValues(memberIdToReadDate, Date::getTime);
             builder.putAllMemberIdToReadDate(map);
+            //todo nadir 消息读取状态
+            if (groupConversation.getLastUpdatedDate() != null) {
+                builder.setHasMsgUnRead(!memberIdToReadDate.containsKey(userId) || memberIdToReadDate.get(userId).before(groupConversation.getLastUpdatedDate()));
+            }
         }
         return builder;
     }

@@ -36,6 +36,8 @@ public interface GroupConversationOrBuilder extends
      */
     int getMemberIdToReadDateCount();
 
+    boolean hasMsgUnRead();
+
     /**
      * <code>map&lt;int64, int64&gt; member_id_to_read_date = 2;</code>
      */

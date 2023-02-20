@@ -22,6 +22,8 @@ import im.turms.server.common.storage.mongo.entity.annotation.Document;
 import im.turms.server.common.storage.mongo.entity.annotation.Field;
 import im.turms.server.common.storage.mongo.entity.annotation.Id;
 import im.turms.server.common.storage.mongo.entity.annotation.Sharded;
+import im.turms.service.domain.group.po.Group;
+import jakarta.annotation.Nullable;
 import lombok.Data;
 
 import java.util.Date;
@@ -39,6 +41,9 @@ public final class GroupConversation extends BaseEntity {
 
     @Id
     private final Long groupId;
+
+    @Field(Group.Fields.LAST_UPDATED_DATE)
+    private final Date lastUpdatedDate;
 
     @Field(Fields.MEMBER_ID_TO_READ_DATE)
     private final Map<Long, Date> memberIdToReadDate;

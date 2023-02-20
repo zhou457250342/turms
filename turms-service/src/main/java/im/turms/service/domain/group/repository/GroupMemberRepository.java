@@ -28,6 +28,7 @@ import im.turms.server.common.storage.mongo.TurmsMongoClient;
 import im.turms.server.common.storage.mongo.operation.option.Filter;
 import im.turms.server.common.storage.mongo.operation.option.QueryOptions;
 import im.turms.server.common.storage.mongo.operation.option.Update;
+import im.turms.service.domain.group.po.Group;
 import im.turms.service.domain.group.po.GroupMember;
 import im.turms.service.infra.validation.ValidGroupMemberRole;
 import org.springframework.beans.factory.annotation.Qualifier;

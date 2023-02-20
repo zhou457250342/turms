@@ -84,6 +84,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
@@ -598,8 +599,9 @@ public class MessageService {
         }
         if (updateReadDateAfterMessageSent) {
             Mono<Void> upsertConversation = isGroupMessage
-                    ? conversationService.upsertGroupConversationReadDate(targetId, senderId, deliveryDate)
+                    ? conversationService.upsertGroupConversationReadDate(targetId, senderId, deliveryDate, true)
                     : conversationService.upsertPrivateConversationReadDate(senderId, targetId, deliveryDate);
+
             return saveMessage
                     .doOnNext(ignored -> upsertConversation
                             .subscribe(null, t -> LOGGER.error("Caught an error while upserting the {} conversation: {}",

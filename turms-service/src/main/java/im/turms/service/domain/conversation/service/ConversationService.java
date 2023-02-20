@@ -18,6 +18,7 @@
 package im.turms.service.domain.conversation.service;
 
 import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.UpdateResult;
 import com.mongodb.reactivestreams.client.ClientSession;
 import im.turms.server.common.access.common.ResponseStatusCode;
 import im.turms.server.common.infra.collection.CollectionUtil;
@@ -27,12 +28,16 @@ import im.turms.server.common.infra.property.TurmsProperties;
 import im.turms.server.common.infra.property.TurmsPropertiesManager;
 import im.turms.server.common.infra.property.env.service.business.conversation.ReadReceiptProperties;
 import im.turms.server.common.infra.validation.Validator;
+import im.turms.server.common.storage.mongo.DomainFieldName;
 import im.turms.server.common.storage.mongo.IMongoCollectionInitializer;
 import im.turms.server.common.storage.mongo.exception.DuplicateKeyException;
+import im.turms.server.common.storage.mongo.operation.option.Filter;
+import im.turms.server.common.storage.mongo.operation.option.Update;
 import im.turms.service.domain.conversation.po.GroupConversation;
 import im.turms.service.domain.conversation.po.PrivateConversation;
 import im.turms.service.domain.conversation.repository.GroupConversationRepository;
 import im.turms.service.domain.conversation.repository.PrivateConversationRepository;
+import im.turms.service.domain.group.po.Group;
 import im.turms.service.domain.group.service.GroupMemberService;
 import im.turms.service.storage.mongo.OperationResultPublisherPool;
 import org.springframework.context.annotation.DependsOn;
@@ -46,6 +51,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -95,7 +101,7 @@ public class ConversationService {
         if (useServerTime) {
             readDate = new Date();
         }
-        return upsertGroupConversationReadDate(groupId, memberId, readDate);
+        return upsertGroupConversationReadDate(groupId, memberId, readDate, false);
     }
 
     // TODO: authenticate
@@ -113,7 +119,8 @@ public class ConversationService {
 
     public Mono<Void> upsertGroupConversationReadDate(@NotNull Long groupId,
                                                       @NotNull Long memberId,
-                                                      @Nullable @PastOrPresent Date readDate) {
+                                                      @Nullable @PastOrPresent Date readDate,
+                                                      boolean isLastOnDate) {
         try {
             Validator.notNull(groupId, "groupId");
             Validator.notNull(memberId, "memberId");
@@ -123,6 +130,7 @@ public class ConversationService {
         }
         Date finalReadDate = readDate == null ? new Date() : readDate;
         return groupConversationRepository.upsert(groupId, memberId, finalReadDate, allowMoveReadDateForward)
+                .then(Mono.defer(() -> updateConversationLastOn(groupId, readDate, isLastOnDate).then()))
                 .onErrorResume(DuplicateKeyException.class,
                         e -> readDate == null
                                 ? Mono.empty()
@@ -204,6 +212,17 @@ public class ConversationService {
             return Flux.empty();
         }
         return groupConversationRepository.findByIds(groupIds);
+    }
+
+    public Mono<UpdateResult> updateConversationLastOn(@NotNull Long groupId, @NotNull Date lastOnDate, boolean isLastOnDate) {
+        if (!isLastOnDate) return Mono.empty();
+        try {
+            Validator.notNull(groupId, "groupId");
+            Validator.notNull(lastOnDate, "lastOnDate");
+        } catch (ResponseException e) {
+            return Mono.error(e);
+        }
+        return groupConversationRepository.updateConversationLastOn(groupId, lastOnDate);
     }
 
     public Flux<PrivateConversation> queryPrivateConversationsByOwnerIds(
