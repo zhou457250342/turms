@@ -6,6 +6,8 @@ export const protobufPackage = "im.turms.proto";
 
 export interface GroupConversation {
   groupId: string;
+  unReadMsgCount: string;
+  hasMsgUnRead: boolean;
   memberIdToReadDate: { [key: string]: string };
 }
 
@@ -15,7 +17,7 @@ export interface GroupConversation_MemberIdToReadDateEntry {
 }
 
 function createBaseGroupConversation(): GroupConversation {
-  return { groupId: "0", memberIdToReadDate: {} };
+  return { groupId: "0", unReadMsgCount: "0", hasMsgUnRead: false, memberIdToReadDate: {} };
 }
 
 export const GroupConversation = {
@@ -23,8 +25,14 @@ export const GroupConversation = {
     if (message.groupId !== "0") {
       writer.uint32(8).int64(message.groupId);
     }
+    if (message.unReadMsgCount !== "0") {
+      writer.uint32(16).int64(message.unReadMsgCount);
+    }
+    if (message.hasMsgUnRead === true) {
+      writer.uint32(24).bool(message.hasMsgUnRead);
+    }
     Object.entries(message.memberIdToReadDate).forEach(([key, value]) => {
-      GroupConversation_MemberIdToReadDateEntry.encode({ key: key as any, value }, writer.uint32(18).fork()).ldelim();
+      GroupConversation_MemberIdToReadDateEntry.encode({ key: key as any, value }, writer.uint32(34).fork()).ldelim();
     });
     return writer;
   },
@@ -40,9 +48,15 @@ export const GroupConversation = {
           message.groupId = longToString(reader.int64() as Long);
           break;
         case 2:
-          const entry2 = GroupConversation_MemberIdToReadDateEntry.decode(reader, reader.uint32());
-          if (entry2.value !== undefined) {
-            message.memberIdToReadDate[entry2.key] = entry2.value;
+          message.unReadMsgCount = longToString(reader.int64() as Long);
+          break;
+        case 3:
+          message.hasMsgUnRead = reader.bool();
+          break;
+        case 4:
+          const entry4 = GroupConversation_MemberIdToReadDateEntry.decode(reader, reader.uint32());
+          if (entry4.value !== undefined) {
+            message.memberIdToReadDate[entry4.key] = entry4.value;
           }
           break;
         default:

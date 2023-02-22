@@ -44,6 +44,8 @@ export default class ConversationService {
             }
         }).then(n => Response.fromNotification(n, data => NotificationUtil.transform(data.conversations?.groupConversations)?.map(c => ({
             groupId: c.groupId,
+            unReadMsgCount: c.unReadMsgCount,
+            hasMsgUnRead : c.hasMsgUnRead,
             memberIdToReadDate: NotificationUtil.transformMapValToDate(c.memberIdToReadDate)
         })) || []));
     }

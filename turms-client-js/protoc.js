@@ -73,7 +73,9 @@ function compile() {
     fs.mkdirSync(outDir);
     // Use glob instead of the param "proto_path" because protoc-3.15.x-win64 won't accept
     // "./src/proto/*.proto" if there is no a proto file in the dir "./src/proto"
-    const files = glob.sync('./src/proto/**/*.proto');
+    // const files = glob.sync('./src/proto/**/*.proto');
+    //单个proto文件执行
+    const files = glob.sync('./src/proto/model/conversation/group_conversation.proto');
     runCmds([
         protoc +
         ` --plugin=${plugin}` +

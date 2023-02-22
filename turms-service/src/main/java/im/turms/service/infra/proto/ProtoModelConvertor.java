@@ -515,14 +515,15 @@ public final class ProtoModelConvertor {
         if (groupId != null) {
             builder.setGroupId(groupId);
         }
+        builder.setUnReadMsgCount(0);
         Map<Long, Date> memberIdToReadDate = groupConversation.getMemberIdToReadDate();
+        //todo nadir 消息读取状态
+        if (groupConversation.getLastUpdatedDate() != null) {
+            builder.setHasMsgUnRead((memberIdToReadDate == null || !memberIdToReadDate.containsKey(userId)) || memberIdToReadDate.get(userId).before(groupConversation.getLastUpdatedDate()));
+        }
         if (memberIdToReadDate != null) {
             Map<Long, Long> map = CollectionUtil.transformValues(memberIdToReadDate, Date::getTime);
             builder.putAllMemberIdToReadDate(map);
-            //todo nadir 消息读取状态
-            if (groupConversation.getLastUpdatedDate() != null) {
-                builder.setHasMsgUnRead(!memberIdToReadDate.containsKey(userId) || memberIdToReadDate.get(userId).before(groupConversation.getLastUpdatedDate()));
-            }
         }
         return builder;
     }
