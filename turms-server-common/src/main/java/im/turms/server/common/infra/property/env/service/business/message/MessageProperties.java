@@ -72,6 +72,17 @@ public class MessageProperties {
     @Min(0)
     private int maxRecordsSizeBytes = 15 * MB;
 
+    @Description("messageNotifyServer")
+    @GlobalProperty
+    @MutableProperty
+    private String messageNotifyUrl = "http://127.0.0.1:8189/hosplatform/v2/consultation/messageNotify";
+
+    @Description("messageNotifySignKey")
+    @GlobalProperty
+    @MutableProperty
+    private String messageNotifySignKey = "f%WfuDbhYQ$lkuxBB&JBGx*jT7tkpKhd";
+
+
     @Description("Whether to persist messages in databases.\n" +
             "Note: If false, senders will not get the message ID after the message has sent and cannot edit it")
     @GlobalProperty

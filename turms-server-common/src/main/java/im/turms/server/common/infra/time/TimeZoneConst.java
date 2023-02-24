@@ -36,5 +36,5 @@ public class TimeZoneConst {
      */
     public static final ZoneId ZONE_ID = ZoneOffset.UTC;
     public static final TimeZone ZONE = TimeZone.getTimeZone(ZONE_ID);
-
+    public static final TimeZone ZONE_GMT8 = TimeZone.getTimeZone("GMT+8");
 }

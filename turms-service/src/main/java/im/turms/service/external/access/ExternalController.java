@@ -6,14 +6,18 @@ import im.turms.server.common.access.admin.dto.response.HttpHandlerResult;
 import im.turms.server.common.access.admin.dto.response.ResponseDTO;
 import im.turms.server.common.access.admin.permission.RequiredPermission;
 import im.turms.server.common.access.admin.web.annotation.PostMapping;
+import im.turms.server.common.access.admin.web.annotation.QueryParam;
 import im.turms.server.common.access.admin.web.annotation.RequestBody;
 import im.turms.server.common.access.admin.web.annotation.RestController;
 import im.turms.server.common.access.client.dto.constant.GroupMemberRole;
 import im.turms.server.common.domain.user.po.User;
+import im.turms.server.common.infra.net.InetAddressUtil;
 import im.turms.service.domain.group.access.admin.dto.request.AddGroupDTO;
 import im.turms.service.domain.group.po.Group;
 import im.turms.service.domain.group.service.GroupMemberService;
 import im.turms.service.domain.group.service.GroupService;
+import im.turms.service.domain.message.access.admin.dto.request.CreateMessageDTO;
+import im.turms.service.domain.message.service.MessageService;
 import im.turms.service.domain.user.access.admin.dto.request.AddUserDTO;
 import im.turms.service.domain.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +25,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import static im.turms.server.common.access.admin.permission.AdminPermission.GROUP_CREATE;
-import static im.turms.server.common.access.admin.permission.AdminPermission.USER_CREATE;
+import static im.turms.server.common.access.admin.permission.AdminPermission.*;
 
 /**
  * @Author : nadir
@@ -37,6 +40,8 @@ public class ExternalController {
     GroupService groupService;
     @Autowired
     GroupMemberService groupMemberService;
+    @Autowired
+    MessageService messageService;
 
     @PostMapping("accountImport")
     @RequiredPermission(USER_CREATE)
@@ -85,5 +90,28 @@ public class ExternalController {
                             .thenReturn(HttpHandlerResult.okIfTruthy(groupId[0]));
                 }
         );
+    }
+
+    @PostMapping("message/send")
+    @RequiredPermission(MESSAGE_CREATE)
+    public Mono<HttpHandlerResult<ResponseDTO<Void>>> createMessages(
+            @QueryParam(defaultValue = "true") boolean send,
+            @RequestBody CreateMessageDTO createMessageDTO) {
+        String ip = createMessageDTO.senderIp();
+        Mono<Void> sendMono = messageService.authAndSaveAndSendMessage(
+                send,
+                createMessageDTO.senderId(),
+                createMessageDTO.senderDeviceType(),
+                ip == null ? null : InetAddressUtil.ipStringToBytes(ip),
+                createMessageDTO.id(),
+                createMessageDTO.isGroupMessage(),
+                createMessageDTO.isSystemMessage(),
+                createMessageDTO.text(),
+                createMessageDTO.records(),
+                createMessageDTO.targetId(),
+                createMessageDTO.burnAfter(),
+                createMessageDTO.referenceId(),
+                createMessageDTO.preMessageId());
+        return sendMono.thenReturn(HttpHandlerResult.RESPONSE_OK);
     }
 }

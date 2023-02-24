@@ -213,7 +213,7 @@ function sendMsgGroup(client,container){
 
 function queryGroupConversations(client,container){
     const groupId = document.getElementById("msg_group_id").value;
-    const groupIds=[groupId];
+    const groupIds=[groupId,"1585570495802281984"];
     client.conversationService.queryGroupConversations({
         groupIds
     }).then(res => appendContainer(container, `message ${JSON.stringify(res.data)} has been sent`))

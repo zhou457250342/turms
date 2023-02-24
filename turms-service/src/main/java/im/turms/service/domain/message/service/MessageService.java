@@ -19,9 +19,11 @@ package im.turms.service.domain.message.service;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.google.gson.JsonObject;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import com.mongodb.reactivestreams.client.ClientSession;
+import im.turms.server.common.access.admin.web.HttpUtil;
 import im.turms.server.common.access.client.dto.ClientMessagePool;
 import im.turms.server.common.access.client.dto.constant.DeviceType;
 import im.turms.server.common.access.client.dto.notification.TurmsNotification;
@@ -32,6 +34,7 @@ import im.turms.server.common.infra.cluster.service.idgen.ServiceType;
 import im.turms.server.common.infra.collection.CollectionUtil;
 import im.turms.server.common.infra.collection.CollectorUtil;
 import im.turms.server.common.infra.exception.ResponseException;
+import im.turms.server.common.infra.json.JsonUtil;
 import im.turms.server.common.infra.lang.LongUtil;
 import im.turms.server.common.infra.logging.core.logger.Logger;
 import im.turms.server.common.infra.logging.core.logger.LoggerFactory;
@@ -83,6 +86,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import jakarta.annotation.Nullable;
@@ -125,6 +129,7 @@ public class MessageService {
     private final UserService userService;
     private final PluginManager pluginManager;
 
+    private final MessageProperties messageProperties;
     private final boolean useConversationId;
     private final boolean useSequenceIdForGroupConversation;
     private final boolean useSequenceIdForPrivateConversation;
@@ -186,7 +191,7 @@ public class MessageService {
         this.pluginManager = pluginManager;
 
         TurmsProperties globalProperties = propertiesManager.getGlobalProperties();
-        MessageProperties messageProperties = globalProperties.getService().getMessage();
+        messageProperties = globalProperties.getService().getMessage();
         useConversationId = messageProperties.isUseConversationId();
         SequenceIdProperties sequenceIdProperties = messageProperties.getSequenceId();
         useSequenceIdForGroupConversation = sequenceIdProperties.isUseSequenceIdForGroupConversation();
@@ -940,6 +945,8 @@ public class MessageService {
                                 if (message.getId() != null && sentMessageCache != null) {
                                     cacheSentMessage(message);
                                 }
+                                //todo nadir 接入方消息推送
+                                messageNotify(message);
                                 return new MessageAndRecipientIds(message, recipientIds);
                             });
                 });
@@ -1150,4 +1157,37 @@ public class MessageService {
 
     // conversation ID
 
+    /**
+     * 接入方消息推送
+     */
+    private void messageNotify(Message message) {
+        CompletableFuture.runAsync(() -> {
+            try {
+                var param = new JsonObject();
+                param.addProperty("senderTime", DateUtil.toStr(message.getDeliveryDate().getTime()));
+                param.addProperty("targetId", message.getTargetId());
+                param.addProperty("msg", message.getText());
+                param.addProperty("isGroupMessage", message.getIsGroupMessage());
+                param.addProperty("isSystemMessage", message.getIsSystemMessage());
+                param.addProperty("msgId", message.getId());
+                param.addProperty("senderId", message.getSenderId());
+                param.addProperty("sign", sign(param, messageProperties.getMessageNotifySignKey()));
+                HttpUtil.doPostJson(messageProperties.getMessageNotifyUrl(), param.toString(), null, 1000 * 5, null);
+            } catch (Exception ex) {
+                System.out.printf("messageNotify is error " + ex.getMessage());
+            }
+        });
+    }
+
+    /**
+     * 消息通知内容签名
+     *
+     * @param data
+     * @param signKey
+     * @return
+     */
+    private String sign(JsonObject data, String signKey) {
+        //todo nadir sign
+        return signKey + "turms";
+    }
 }

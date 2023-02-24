@@ -21,6 +21,8 @@ import im.turms.server.common.BaseTurmsApplication;
 import im.turms.server.common.infra.lang.PackageConst;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.TimeZone;
+
 /**
  * @author James Chen
  */

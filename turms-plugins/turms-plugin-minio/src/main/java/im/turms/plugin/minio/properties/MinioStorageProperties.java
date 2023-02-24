@@ -30,7 +30,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public class MinioStorageProperties {
 
     private boolean enabled = true;
-    private String endpoint = "http://127.0.0.1:9000";
+    private String endpoint = "http://192.168.50.156:9000";
     private String endpoint_s = "http://192.168.50.234:9101";
     private String region = "";
     private String accessKey = "minioadmin";

@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
+
 import jakarta.annotation.Nullable;
 
 /**
@@ -39,7 +40,7 @@ public final class DateUtil {
     private static final FastThreadLocal<Calendar> CALENDAR_THREAD_LOCAL = new FastThreadLocal<>() {
         @Override
         protected Calendar initialValue() {
-            return new GregorianCalendar(TimeZoneConst.ZONE);
+            return new GregorianCalendar(TimeZoneConst.ZONE_GMT8);
         }
     };
 
