@@ -1,15 +1,15 @@
 [submodule "turms-client-js/src/proto"]
 	path = turms-client-js/src/proto
-	url = https://github.com/turms-im/proto.git
+url=https://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@github.com/zhou457250342/turms.git
 [submodule "turms-client-kotlin/src/main/proto"]
 	path = turms-client-kotlin/src/main/proto
 	url = https://github.com/turms-im/proto.git
 [submodule "turms-client-swift/Protos"]
 	path = turms-client-swift/Protos
-	url = https://github.com/turms-im/proto.git
+url=https://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@github.com/zhou457250342/turms.git
 [submodule "turms-client-dart/proto"]
 	path = turms-client-dart/proto
-	url = https://github.com/turms-im/proto.git
+url=https://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@github.com/zhou457250342/turms.git
 [submodule "turms-server-common/src/main/proto"]
 	path = turms-server-common/src/main/proto
-	url = https://github.com/turms-im/proto.git
+url=https://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@github.com/zhou457250342/turms.git
